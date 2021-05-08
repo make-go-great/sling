@@ -1,4 +1,7 @@
-# Sling [![Build Status](https://github.com/dghubble/sling/workflows/test/badge.svg)](https://github.com/dghubble/oauth1/actions?query=workflow%3Atest+branch%3Amaster) [![Coverage](https://gocover.io/_badge/github.com/dghubble/sling)](https://gocover.io/github.com/dghubble/sling) [![GoDoc](https://godoc.org/github.com/dghubble/sling?status.svg)](https://godoc.org/github.com/dghubble/sling)
+# Sling
+
+[![Go](https://github.com/haunt98/sling/workflows/Go/badge.svg?branch=main)](https://github.com/actions/setup-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/haunt98/sling.svg)](https://pkg.go.dev/github.com/haunt98/sling)
 
 <img align="right" src="https://storage.googleapis.com/dghubble/small-gopher-with-sling.png">
 
