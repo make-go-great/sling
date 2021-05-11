@@ -1,5 +1,87 @@
 # CHANGELOG
 
+## v1.4.0 (2021-05-11)
+
+### Added
+
+- feat: split Response from Receive (2021-05-11)
+
+- feat: only decode response when provide (2021-05-11)
+
+- feat: use Clone to make a new Sling (2021-05-11)
+
+- feat: remove Do() as there is no meaning to use external request (2021-05-11)
+
+- feat: move response to internal (2021-05-11)
+
+- feat: use internal BodyProvider (2021-05-11)
+
+- feat: add body interface in internal http (2021-05-11)
+
+- feat: add AddQuery and AddQueries (2021-05-11)
+
+- feat: replace Doer with slinghttp (2021-05-11)
+
+- feat: add http interface (2021-05-11)
+
+- feat: deprecated ioutil with go 1.16 (2021-05-09)
+
+### Others
+
+- chore: add github api examples (2021-05-11)
+
+- refactor: consistent naming (2021-05-11)
+
+- refactor: add URLValues naming (2021-05-11)
+
+- refactor: make New() return barebone Sling (2021-05-11)
+
+- docs: remove See useless (2021-05-11)
+
+- refactor: cleanup Response section (2021-05-11)
+
+- refactor: remove internal (2021-05-11)
+
+- refactor: rewrite Request() (2021-05-11)
+
+- refactor: body -> bodyProvider (2021-05-11)
+
+- refactor: better error return for Request() (2021-05-11)
+
+- refactor: rewrite addQueriesToURL (2021-05-11)
+
+- refactor: pathURL -> reqURL (2021-05-11)
+
+- docs: simple explain (2021-05-11)
+
+- refactor: rawURL, path -> pathURL (2021-05-11)
+
+- refactor: use direct url.URL instead of string (2021-05-11)
+
+- refactor: better word name for Set, Add Header (2021-05-11)
+
+- refactor: use http method const (2021-05-11)
+
+- refactor: goquery -> query (2021-05-11)
+
+- test: remove sling unit test (2021-05-11)
+
+- refactor: move type to where it was used (2021-05-11)
+
+- refactor: remove doc anyway (2021-05-09)
+
+- refactor: remove redundant type (2021-05-09)
+
+- chore(readme): this is just a fork for learning (2021-05-09)
+
+- build: update go.mod module for my forked (2021-05-09)
+
+- chore: remove examples (2021-05-09)
+
+- build: update go.mod (2021-05-09)
+
+- chore(changelog): re-generate v1.3.0 (2021-05-09)
+
 ## v1.3.0 (2021-05-09)
 
 ### Others
