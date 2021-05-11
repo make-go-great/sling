@@ -11,19 +11,12 @@ import (
 
 // Sling is an HTTP Request builder and sender.
 type Sling struct {
-	// HTTP Client for doing requests
-	httpClient slinghttp.Client
-	// HTTP method (GET, POST, etc.)
-	method string
-	// raw url string for requests
-	rawURL string
-	// stores key-values pairs to add to request's Headers
-	header http.Header
-	// url tagged query structs
-	queryStructs []interface{}
-	// body provider
-	bodyProvider BodyProvider
-	// response decoder
+	httpClient      slinghttp.Client
+	method          string
+	rawURL          *url.URL
+	header          http.Header
+	queryStructs    []interface{}
+	bodyProvider    BodyProvider
 	responseDecoder ResponseDecoder
 }
 
@@ -67,10 +60,8 @@ func (s *Sling) New() *Sling {
 	}
 }
 
-// Http Client
+// HTTP client
 
-// HTTPClient sets the http Client.
-// Fallback to http.DefaultClient.
 func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 	if client == nil {
 		s.httpClient = http.DefaultClient
@@ -81,7 +72,7 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 	return s
 }
 
-// Method
+// HTTP Method
 // See: https://golang.org/pkg/net/http/#pkg-constants
 
 func (s *Sling) Get(pathURL string) *Sling {
@@ -127,36 +118,22 @@ func (s *Sling) Method(method, pathURL string) *Sling {
 
 // Header
 
-// AddHeader adds the key, value pair in Headers, appending values for existing keys
-// to the key's values. Header keys are canonicalized.
 func (s *Sling) AddHeader(key, value string) *Sling {
 	s.header.Add(key, value)
 	return s
 }
 
-// SetHeader sets the key, value pair in Headers, replacing existing values
-// associated with key. Header keys are canonicalized.
 func (s *Sling) SetHeader(key, value string) *Sling {
 	s.header.Set(key, value)
 	return s
 }
 
-// Url
+// URL
 
-// Base sets the rawURL. If you intend to extend the url with Path,
-// baseUrl should be specified with a trailing slash.
-func (s *Sling) Base(rawURL string) *Sling {
-	s.rawURL = rawURL
-	return s
-}
-
-// Path extends the rawURL with the given path by resolving the reference to
-// an absolute URL. If parsing errors occur, the rawURL is left unmodified.
-func (s *Sling) Path(path string) *Sling {
-	baseURL, baseErr := url.Parse(s.rawURL)
-	pathURL, pathErr := url.Parse(path)
-	if baseErr == nil && pathErr == nil {
-		s.rawURL = baseURL.ResolveReference(pathURL).String()
+func (s *Sling) Path(urlStr string) *Sling {
+	pathURL, pathErr := url.Parse(urlStr)
+	if pathErr == nil {
+		s.rawURL = pathURL
 		return s
 	}
 	return s
@@ -230,12 +207,7 @@ func (s *Sling) BodyForm(bodyForm interface{}) *Sling {
 // Returns any errors parsing the rawURL, encoding query structs, encoding
 // the body, or creating the http.Request.
 func (s *Sling) Request() (*http.Request, error) {
-	reqURL, err := url.Parse(s.rawURL)
-	if err != nil {
-		return nil, err
-	}
-
-	err = addQueryStructs(reqURL, s.queryStructs)
+	err := addQueryStructs(s.rawURL, s.queryStructs)
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +219,7 @@ func (s *Sling) Request() (*http.Request, error) {
 			return nil, err
 		}
 	}
-	req, err := http.NewRequest(s.method, reqURL.String(), body)
+	req, err := http.NewRequest(s.method, s.rawURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
