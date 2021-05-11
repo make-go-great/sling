@@ -16,12 +16,12 @@ func (rd *RawResponseDecoder) Decode(rsp *http.Response, v interface{}) error {
 		return fmt.Errorf("failed to read all response body: %w", err)
 	}
 
-	vStr, ok := v.(*string)
+	vBytes, ok := v.(*[]byte)
 	if !ok {
-		return fmt.Errorf("v must be string pointer")
+		return fmt.Errorf("v must be []byte pointer")
 	}
 
-	*vStr = string(bytes)
+	*vBytes = bytes
 
 	return nil
 }

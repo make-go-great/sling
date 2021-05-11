@@ -29,14 +29,14 @@ func exampleRaw(parent *sling.Sling) {
 		return
 	}
 
-	var s string
+	var bytes []byte
 	var rawRspDecoder slinghttp.RawResponseDecoder
-	if err := child.Get("/repos/haunt98/sling").ResponseDecoder(&rawRspDecoder).Receive(&s); err != nil {
+	if err := child.Get("/repos/haunt98/sling").ResponseDecoder(&rawRspDecoder).Receive(&bytes); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("Result: %s\n", s)
+	fmt.Printf("Result: %s\n", string(bytes))
 }
 
 func exampleJSON(parent *sling.Sling) {
