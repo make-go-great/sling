@@ -39,7 +39,7 @@ func New(httpClient slinghttp.Client) *Sling {
 // Clone return Sling with same values
 // All values are copied except HTTP client so that change in the clone will not affect the original
 func (s *Sling) Clone() (*Sling, error) {
-	// Copy request url
+	// Copy request URL
 	// Feel like a hack
 	reqURLStr := s.reqURL.String()
 	reqURL, err := url.Parse(reqURLStr)
