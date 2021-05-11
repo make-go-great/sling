@@ -15,7 +15,7 @@ type user struct {
 
 func main() {
 	parent := sling.New(http.DefaultClient).
-		Get("https://api.github.com/users/haunt98").
+		BaseURL("https://api.github.com").
 		AddHeader("Accept", "application/vnd.github.v3+json")
 
 	exampleRaw(parent)
@@ -31,7 +31,7 @@ func exampleRaw(parent *sling.Sling) {
 
 	var s string
 	var rawRspDecoder slinghttp.RawResponseDecoder
-	if err := child.ResponseDecoder(&rawRspDecoder).Receive(&s); err != nil {
+	if err := child.Get("/repos/haunt98/sling").ResponseDecoder(&rawRspDecoder).Receive(&s); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -48,7 +48,7 @@ func exampleJSON(parent *sling.Sling) {
 
 	var u user
 	var jsonRspDecoder slinghttp.JSONResponseDecoder
-	if err := child.ResponseDecoder(&jsonRspDecoder).Receive(&u); err != nil {
+	if err := child.Get("/users/haunt98").ResponseDecoder(&jsonRspDecoder).Receive(&u); err != nil {
 		fmt.Println(err)
 		return
 	}
