@@ -16,7 +16,7 @@ const (
 	defaultQueryLen = 4
 )
 
-// Sling is an HTTP Request builder and sender
+// Sling is an HTTP request builder and response receiver
 type Sling struct {
 	httpClient      slinghttp.Client
 	method          string
