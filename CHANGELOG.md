@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.6.0 (2021-05-11)
+
+### Added
+
+- feat: use BaseURL and PathURL to support base url mechanism (2021-05-11)
+
+### Others
+
+- chore: use base URL concept in examples (2021-05-11)
+
+- docs: better explain Receive and Response (2021-05-11)
+
+- chore: run examples in github action (2021-05-11)
+
+- build: go mod tidy (2021-05-11)
+
+- chore(changelog): generate v1.5.0 (2021-05-11)
+
 ## v1.5.0 (2021-05-11)
 
 ### Added
