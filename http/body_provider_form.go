@@ -16,12 +16,12 @@ type FormBodyProvider struct {
 
 var _ BodyProvider = (*FormBodyProvider)(nil)
 
-func (b *FormBodyProvider) ContentType() string {
+func (bp *FormBodyProvider) ContentType() string {
 	return formContentType
 }
 
-func (b *FormBodyProvider) Body() (io.Reader, error) {
-	urlValues, err := query.Values(b.Data)
+func (bp *FormBodyProvider) Body() (io.Reader, error) {
+	urlValues, err := query.Values(bp.Data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query values: %w", err)
 	}

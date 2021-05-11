@@ -15,14 +15,14 @@ type JSONBodyProvider struct {
 
 var _ BodyProvider = (*JSONBodyProvider)(nil)
 
-func (b *JSONBodyProvider) ContentType() string {
+func (bp *JSONBodyProvider) ContentType() string {
 	return jsonContentType
 }
 
-func (b *JSONBodyProvider) Body() (io.Reader, error) {
+func (bp *JSONBodyProvider) Body() (io.Reader, error) {
 	buf := &bytes.Buffer{}
 
-	if err := json.NewEncoder(buf).Encode(b.Data); err != nil {
+	if err := json.NewEncoder(buf).Encode(bp.Data); err != nil {
 		return nil, fmt.Errorf("failed to new json encoder: %w", err)
 	}
 
