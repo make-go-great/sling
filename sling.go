@@ -219,7 +219,7 @@ func (s *Sling) BodyForm(bodyForm interface{}) *Sling {
 func (s *Sling) Request() (*http.Request, error) {
 	err := addQueriesToURL(s.reqURL, s.queries)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to add queries to url: %w", err)
 	}
 
 	var body io.Reader
@@ -229,12 +229,15 @@ func (s *Sling) Request() (*http.Request, error) {
 			return nil, err
 		}
 	}
+
 	req, err := http.NewRequest(s.method, s.reqURL.String(), body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to new request: %w", err)
 	}
-	addHeaders(req, s.header)
-	return req, err
+
+	addHeaderToRequest(req, s.header)
+
+	return req, nil
 }
 
 func addQueriesToURL(reqURL *url.URL, qs []interface{}) error {
@@ -261,9 +264,7 @@ func addQueriesToURL(reqURL *url.URL, qs []interface{}) error {
 	return nil
 }
 
-// addHeaders adds the key, value pairs from the given http.Header to the
-// request. Values for existing keys are appended to the keys values.
-func addHeaders(req *http.Request, header http.Header) {
+func addHeaderToRequest(req *http.Request, header http.Header) {
 	for key, values := range header {
 		for _, value := range values {
 			req.Header.Add(key, value)
