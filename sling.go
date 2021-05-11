@@ -279,6 +279,10 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 }
 
 func (s *Sling) Receive(v interface{}) error {
+	if s.responseDecoder == nil {
+		return nil
+	}
+
 	rsp, err := s.Response()
 	if err != nil {
 		return err
@@ -288,12 +292,14 @@ func (s *Sling) Receive(v interface{}) error {
 		return fmt.Errorf("http status code: %d", rsp.StatusCode)
 	}
 
+	if rsp.ContentLength == 0 {
+		return nil
+	}
+
 	defer rsp.Body.Close()
 
-	if s.responseDecoder != nil {
-		if err := s.responseDecoder.Decode(rsp, v); err != nil {
-			return fmt.Errorf("failed to decode response: %w", err)
-		}
+	if err := s.responseDecoder.Decode(rsp, v); err != nil {
+		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
 	// https://golang.org/pkg/net/http/#Response
