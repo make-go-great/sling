@@ -234,26 +234,26 @@ func (s *Sling) Request() (*http.Request, error) {
 }
 
 func addQueriesToURL(reqURL *url.URL, qs []interface{}) error {
-	oldValues, err := url.ParseQuery(reqURL.RawQuery)
+	oldURLValues, err := url.ParseQuery(reqURL.RawQuery)
 	if err != nil {
 		return fmt.Errorf("failed to parse query: %w", err)
 	}
 
 	// Combine old queries with new queries
 	for _, q := range qs {
-		newValues, err := query.Values(q)
+		newURLValues, err := query.Values(q)
 		if err != nil {
 			return fmt.Errorf("failed to get query values: %w", err)
 		}
 
-		for key, values := range newValues {
+		for key, values := range newURLValues {
 			for _, value := range values {
-				oldValues.Add(key, value)
+				oldURLValues.Add(key, value)
 			}
 		}
 	}
 
-	reqURL.RawQuery = oldValues.Encode()
+	reqURL.RawQuery = oldURLValues.Encode()
 
 	return nil
 }
