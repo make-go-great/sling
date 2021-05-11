@@ -296,7 +296,7 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 	return s
 }
 
-// Request decode response body to v
+// Receive decode response body to v
 func (s *Sling) Receive(v interface{}) error {
 	if s.responseDecoder == nil {
 		return nil
