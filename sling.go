@@ -1,7 +1,6 @@
 package sling
 
 import (
-	"encoding/base64"
 	"io"
 	"net/http"
 	"net/url"
@@ -128,32 +127,18 @@ func (s *Sling) Method(method, pathURL string) *Sling {
 
 // Header
 
-// Add adds the key, value pair in Headers, appending values for existing keys
+// AddHeader adds the key, value pair in Headers, appending values for existing keys
 // to the key's values. Header keys are canonicalized.
-func (s *Sling) Add(key, value string) *Sling {
+func (s *Sling) AddHeader(key, value string) *Sling {
 	s.header.Add(key, value)
 	return s
 }
 
-// Set sets the key, value pair in Headers, replacing existing values
+// SetHeader sets the key, value pair in Headers, replacing existing values
 // associated with key. Header keys are canonicalized.
-func (s *Sling) Set(key, value string) *Sling {
+func (s *Sling) SetHeader(key, value string) *Sling {
 	s.header.Set(key, value)
 	return s
-}
-
-// SetBasicAuth sets the Authorization header to use HTTP Basic Authentication
-// with the provided username and password. With HTTP Basic Authentication
-// the provided username and password are not encrypted.
-func (s *Sling) SetBasicAuth(username, password string) *Sling {
-	return s.Set("Authorization", "Basic "+basicAuth(username, password))
-}
-
-// basicAuth returns the base64 encoded username:password for basic auth copied
-// from net/http.
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
 // Url
@@ -211,7 +196,7 @@ func (s *Sling) BodyProvider(body BodyProvider) *Sling {
 
 	ct := body.ContentType()
 	if ct != "" {
-		s.Set(contentType, ct)
+		s.SetHeader(contentType, ct)
 	}
 
 	return s
