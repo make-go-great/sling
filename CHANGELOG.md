@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v1.5.0 (2021-05-11)
+
+### Added
+
+- feat: ignore decode when content length = 0 (2021-05-11)
+
+- feat: add raw response decoder (2021-05-11)
+
+### Others
+
+- refactor: use more general names (2021-05-11)
+
+- chore: example for using raw decoder (2021-05-11)
+
+- docs: consistent URL uppercase (2021-05-11)
+
+- docs: better wording for explain sling (2021-05-11)
+
+- chore(changelog): generate v1.4.0 (2021-05-11)
+
 ## v1.4.0 (2021-05-11)
 
 ### Added
