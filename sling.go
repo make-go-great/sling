@@ -292,7 +292,6 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 	}
 
 	s.responseDecoder = rspDecoder
-
 	return s
 }
 
