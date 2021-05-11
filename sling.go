@@ -9,12 +9,6 @@ import (
 	goquery "github.com/google/go-querystring/query"
 )
 
-const (
-	contentType     = "Content-Type"
-	jsonContentType = "application/json"
-	formContentType = "application/x-www-form-urlencoded"
-)
-
 // Doer executes http requests.  It is implemented by *http.Client.  You can
 // wrap *http.Client with layers of Doers to form a stack of client-side
 // middleware.

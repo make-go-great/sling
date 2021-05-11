@@ -6,7 +6,13 @@ import (
 	"io"
 	"strings"
 
-	goquery "github.com/google/go-querystring/query"
+	"github.com/google/go-querystring/query"
+)
+
+const (
+	contentType     = "Content-Type"
+	jsonContentType = "application/json"
+	formContentType = "application/x-www-form-urlencoded"
 )
 
 // BodyProvider provides Body content for http.Request attachment.
@@ -60,7 +66,7 @@ func (p formBodyProvider) ContentType() string {
 }
 
 func (p formBodyProvider) Body() (io.Reader, error) {
-	values, err := goquery.Values(p.payload)
+	values, err := query.Values(p.payload)
 	if err != nil {
 		return nil, err
 	}
