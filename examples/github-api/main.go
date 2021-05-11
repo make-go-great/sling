@@ -16,7 +16,7 @@ type user struct {
 func main() {
 	parent := sling.New(http.DefaultClient).
 		BaseURL("https://api.github.com").
-		AddHeader("Accept", "application/vnd.github.v3+json")
+		SetHeader("Accept", "application/vnd.github.v3+json")
 
 	exampleRaw(parent)
 	exampleJSON(parent)
