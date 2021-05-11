@@ -1,6 +1,7 @@
 package sling
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -236,25 +237,27 @@ func (s *Sling) Request() (*http.Request, error) {
 	return req, err
 }
 
-func addQueriesToURL(reqURL *url.URL, queryStructs []interface{}) error {
-	urlValues, err := url.ParseQuery(reqURL.RawQuery)
+func addQueriesToURL(reqURL *url.URL, qs []interface{}) error {
+	oldValues, err := url.ParseQuery(reqURL.RawQuery)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse query: %w", err)
 	}
-	// encodes query structs into a url.Values map and merges maps
-	for _, queryStruct := range queryStructs {
-		queryValues, err := query.Values(queryStruct)
+
+	// Combine old queries with new queries
+	for _, q := range qs {
+		newValues, err := query.Values(q)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get query values: %w", err)
 		}
-		for key, values := range queryValues {
+
+		for key, values := range newValues {
 			for _, value := range values {
-				urlValues.Add(key, value)
+				oldValues.Add(key, value)
 			}
 		}
 	}
-	// url.Values format to a sorted "url encoded" string, e.g. "key=val&foo=bar"
-	reqURL.RawQuery = urlValues.Encode()
+
+	reqURL.RawQuery = oldValues.Encode()
 	return nil
 }
 
