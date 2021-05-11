@@ -278,10 +278,6 @@ func (s *Sling) Receive(v interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
-	return s.Do(req, v)
-}
-
-func (s *Sling) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	rsp, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to do http request: %w", err)
