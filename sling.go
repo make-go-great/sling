@@ -83,6 +83,7 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 }
 
 // HTTP method
+// Only valid if exist request URL to add method and path URL
 // https://golang.org/pkg/net/http/#pkg-constants
 
 func (s *Sling) Get(pathURL string) *Sling {
