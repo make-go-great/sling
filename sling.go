@@ -290,8 +290,10 @@ func (s *Sling) Receive(v interface{}) (*http.Response, error) {
 	}
 	defer rsp.Body.Close()
 
-	if err := s.responseDecoder.Decode(rsp, v); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
+	if s.responseDecoder != nil && rsp.StatusCode == http.StatusOK {
+		if err := s.responseDecoder.Decode(rsp, v); err != nil {
+			return nil, fmt.Errorf("failed to decode response: %w", err)
+		}
 	}
 
 	// https://golang.org/pkg/net/http/#Response
