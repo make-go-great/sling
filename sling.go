@@ -38,7 +38,7 @@ func New(httpClient slinghttp.Client) *Sling {
 
 // Clone return Sling with same values
 // All values are copied except HTTP client so that change in the clone will not affect the original
-func (s *Sling) New() (*Sling, error) {
+func (s *Sling) Clone() (*Sling, error) {
 	// Copy request url
 	// Feel like a hack
 	reqURLStr := s.reqURL.String()
@@ -278,7 +278,34 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 	return s
 }
 
-func (s *Sling) Receive(v interface{}) (*http.Response, error) {
+func (s *Sling) Receive(v interface{}) error {
+	rsp, err := s.Response()
+	if err != nil {
+		return err
+	}
+
+	if rsp.StatusCode != http.StatusOK {
+		return fmt.Errorf("http status code: %d", rsp.StatusCode)
+	}
+
+	defer rsp.Body.Close()
+
+	if s.responseDecoder != nil {
+		if err := s.responseDecoder.Decode(rsp, v); err != nil {
+			return fmt.Errorf("failed to decode response: %w", err)
+		}
+	}
+
+	// https://golang.org/pkg/net/http/#Response
+	// https://stackoverflow.com/questions/17948827/reusing-http-connections-in-golang
+	if _, err := io.Copy(io.Discard, rsp.Body); err != nil {
+		return fmt.Errorf("failed to discard response body: %w", err)
+	}
+
+	return nil
+}
+
+func (s *Sling) Response() (*http.Response, error) {
 	req, err := s.Request()
 	if err != nil {
 		return nil, err
@@ -287,19 +314,6 @@ func (s *Sling) Receive(v interface{}) (*http.Response, error) {
 	rsp, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to do http request: %w", err)
-	}
-	defer rsp.Body.Close()
-
-	if s.responseDecoder != nil && rsp.StatusCode == http.StatusOK {
-		if err := s.responseDecoder.Decode(rsp, v); err != nil {
-			return nil, fmt.Errorf("failed to decode response: %w", err)
-		}
-	}
-
-	// https://golang.org/pkg/net/http/#Response
-	// https://stackoverflow.com/questions/17948827/reusing-http-connections-in-golang
-	if _, err := io.Copy(io.Discard, rsp.Body); err != nil {
-		return nil, fmt.Errorf("failed to discard response body: %w", err)
 	}
 
 	return rsp, nil
