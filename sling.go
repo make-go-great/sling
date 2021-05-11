@@ -153,8 +153,8 @@ func (s *Sling) BaseURL(baseURL string) *Sling {
 }
 
 // PathURL add path URL to base URL
-// Base URL: example.com/
-// Path URL: users
+// Base URL: example.com
+// Path URL: /users
 // Result: example.com/users
 func (s *Sling) PathURL(pathURL string) *Sling {
 	// Skip if empty base URL
