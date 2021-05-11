@@ -83,58 +83,46 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 }
 
 // Method
+// See: https://golang.org/pkg/net/http/#pkg-constants
 
-// Head sets the Sling method to HEAD and sets the given pathURL.
-func (s *Sling) Head(pathURL string) *Sling {
-	s.method = "HEAD"
-	return s.Path(pathURL)
-}
-
-// Get sets the Sling method to GET and sets the given pathURL.
 func (s *Sling) Get(pathURL string) *Sling {
-	s.method = "GET"
-	return s.Path(pathURL)
+	return s.Method(http.MethodGet, pathURL)
 }
 
-// Post sets the Sling method to POST and sets the given pathURL.
+func (s *Sling) Head(pathURL string) *Sling {
+	return s.Method(http.MethodHead, pathURL)
+}
+
 func (s *Sling) Post(pathURL string) *Sling {
-	s.method = "POST"
-	return s.Path(pathURL)
+	return s.Method(http.MethodPost, pathURL)
 }
 
-// Put sets the Sling method to PUT and sets the given pathURL.
 func (s *Sling) Put(pathURL string) *Sling {
-	s.method = "PUT"
-	return s.Path(pathURL)
+	return s.Method(http.MethodPut, pathURL)
 }
 
-// Patch sets the Sling method to PATCH and sets the given pathURL.
 func (s *Sling) Patch(pathURL string) *Sling {
-	s.method = "PATCH"
-	return s.Path(pathURL)
+	return s.Method(http.MethodPatch, pathURL)
 }
 
-// Delete sets the Sling method to DELETE and sets the given pathURL.
 func (s *Sling) Delete(pathURL string) *Sling {
-	s.method = "DELETE"
-	return s.Path(pathURL)
+	return s.Method(http.MethodDelete, pathURL)
 }
 
-// Options sets the Sling method to OPTIONS and sets the given pathURL.
-func (s *Sling) Options(pathURL string) *Sling {
-	s.method = "OPTIONS"
-	return s.Path(pathURL)
-}
-
-// Trace sets the Sling method to TRACE and sets the given pathURL.
-func (s *Sling) Trace(pathURL string) *Sling {
-	s.method = "TRACE"
-	return s.Path(pathURL)
-}
-
-// Connect sets the Sling method to CONNECT and sets the given pathURL.
 func (s *Sling) Connect(pathURL string) *Sling {
-	s.method = "CONNECT"
+	return s.Method(http.MethodConnect, pathURL)
+}
+
+func (s *Sling) Options(pathURL string) *Sling {
+	return s.Method(http.MethodOptions, pathURL)
+}
+
+func (s *Sling) Trace(pathURL string) *Sling {
+	return s.Method(http.MethodTrace, pathURL)
+}
+
+func (s *Sling) Method(method, pathURL string) *Sling {
+	s.method = method
 	return s.Path(pathURL)
 }
 
