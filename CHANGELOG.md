@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v1.7.0 (2021-05-12)
+
+### Added
+
+- feat: use []byte instead of string for raw decoder (2021-05-12)
+
+- feat: remove Response as it is wrong (2021-05-12)
+
+### Others
+
+- docs: explain better HTTP method (2021-05-11)
+
+- chore: SetHeader prefer (2021-05-11)
+
+- docs: better explain PathURL (2021-05-11)
+
+- chore: remove unused line (2021-05-11)
+
+- docs: correct Receive explain (2021-05-11)
+
+- chore(changelog): generate v1.6.0 (2021-05-11)
+
 ## v1.6.0 (2021-05-11)
 
 ### Added
