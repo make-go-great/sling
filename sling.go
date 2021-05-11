@@ -10,6 +10,8 @@ import (
 	slinghttp "github.com/haunt98/sling/internal/http"
 )
 
+const contentType = "Content-Type"
+
 // Sling is an HTTP Request builder and sender.
 type Sling struct {
 	httpClient      slinghttp.Client
@@ -17,7 +19,7 @@ type Sling struct {
 	reqURL          *url.URL
 	header          http.Header
 	queries         []interface{}
-	bodyProvider    BodyProvider
+	bodyProvider    slinghttp.BodyProvider
 	responseDecoder ResponseDecoder
 }
 
@@ -163,52 +165,41 @@ func (s *Sling) AddQueries(qs ...interface{}) *Sling {
 
 // Body
 
-// Body sets the Sling's body. The body value will be set as the Body on new
-// requests (see Request()).
-// If the provided body is also an io.Closer, the request Body will be closed
-// by http.Client methods.
-func (s *Sling) Body(body io.Reader) *Sling {
-	if body == nil {
+func (s *Sling) BodyJSON(data interface{}) *Sling {
+	if data == nil {
 		return s
 	}
-	return s.BodyProvider(bodyProvider{body: body})
+
+	return s.BodyProvider(&slinghttp.JSONBodyProvider{
+		Data: data,
+	})
 }
 
-// BodyProvider sets the Sling's body provider.
-func (s *Sling) BodyProvider(body BodyProvider) *Sling {
-	if body == nil {
+func (s *Sling) BodyForm(data interface{}) *Sling {
+	if data == nil {
 		return s
 	}
-	s.bodyProvider = body
 
-	ct := body.ContentType()
-	if ct != "" {
-		s.SetHeader(contentType, ct)
+	return s.BodyProvider(&slinghttp.FormBodyProvider{
+		Data: data,
+	})
+}
+
+func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
+	if bodyProvider == nil {
+		return s
 	}
+
+	ct := bodyProvider.ContentType()
+	// Ignore empty content type
+	if ct == "" {
+		return s
+	}
+
+	s.SetHeader(contentType, ct)
+	s.bodyProvider = bodyProvider
 
 	return s
-}
-
-// BodyJSON sets the Sling's bodyJSON. The value pointed to by the bodyJSON
-// will be JSON encoded as the Body on new requests (see Request()).
-// The bodyJSON argument should be a pointer to a JSON tagged struct. See
-// https://golang.org/pkg/encoding/json/#MarshalIndent for details.
-func (s *Sling) BodyJSON(bodyJSON interface{}) *Sling {
-	if bodyJSON == nil {
-		return s
-	}
-	return s.BodyProvider(jsonBodyProvider{payload: bodyJSON})
-}
-
-// BodyForm sets the Sling's bodyForm. The value pointed to by the bodyForm
-// will be url encoded as the Body on new requests (see Request()).
-// The bodyForm argument should be a pointer to a url tagged struct. See
-// https://godoc.org/github.com/google/go-querystring/query for details.
-func (s *Sling) BodyForm(bodyForm interface{}) *Sling {
-	if bodyForm == nil {
-		return s
-	}
-	return s.BodyProvider(formBodyProvider{payload: bodyForm})
 }
 
 // Requests

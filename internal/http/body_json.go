@@ -9,20 +9,20 @@ import (
 
 const jsonContentType = "application/json"
 
-type jsonBodyProvider struct {
-	data interface{}
+type JSONBodyProvider struct {
+	Data interface{}
 }
 
-var _ BodyProvider = (*jsonBodyProvider)(nil)
+var _ BodyProvider = (*JSONBodyProvider)(nil)
 
-func (b *jsonBodyProvider) ContentType() string {
+func (b *JSONBodyProvider) ContentType() string {
 	return jsonContentType
 }
 
-func (b *jsonBodyProvider) Body() (io.Reader, error) {
+func (b *JSONBodyProvider) Body() (io.Reader, error) {
 	buf := &bytes.Buffer{}
 
-	if err := json.NewEncoder(buf).Encode(b.data); err != nil {
+	if err := json.NewEncoder(buf).Encode(b.Data); err != nil {
 		return nil, fmt.Errorf("failed to new json encoder: %w", err)
 	}
 
