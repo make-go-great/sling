@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/haunt98/sling"
@@ -19,36 +18,25 @@ func main() {
 		Get("https://api.github.com/users/haunt98").
 		AddHeader("Accept", "application/vnd.github.v3+json")
 
-	example(parent)
+	exampleRaw(parent)
 	exampleJSON(parent)
 }
 
-func example(parent *sling.Sling) {
+func exampleRaw(parent *sling.Sling) {
 	child, err := parent.Clone()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	rsp, err := child.Response()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer rsp.Body.Close()
-
-	if rsp.StatusCode != http.StatusOK {
-		fmt.Printf("Response status: %d\n", rsp.StatusCode)
-		return
-	}
-
-	bytes, err := io.ReadAll(rsp.Body)
-	if err != nil {
+	var s string
+	var rawRspDecoder slinghttp.RawResponseDecoder
+	if err := child.ResponseDecoder(&rawRspDecoder).Receive(&s); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("Result: %s\n", string(bytes))
+	fmt.Printf("Result: %s\n", s)
 }
 
 func exampleJSON(parent *sling.Sling) {
