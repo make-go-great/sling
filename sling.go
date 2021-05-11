@@ -202,22 +202,19 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 	return s
 }
 
-// Requests
+// Request
 
-// Request returns a new http.Request created with the Sling properties.
-// Returns any errors parsing the rawURL, encoding query structs, encoding
-// the body, or creating the http.Request.
+// Request return HTTP request.
 func (s *Sling) Request() (*http.Request, error) {
-	err := addQueriesToURL(s.reqURL, s.queries)
-	if err != nil {
+	if err := addQueriesToURL(s.reqURL, s.queries); err != nil {
 		return nil, fmt.Errorf("failed to add queries to url: %w", err)
 	}
 
 	var body io.Reader
 	if s.bodyProvider != nil {
-		body, err = s.bodyProvider.Body()
-		if err != nil {
-			return nil, err
+		var err error
+		if body, err = s.bodyProvider.Body(); err != nil {
+			return nil, fmt.Errorf("failed to provide body: %w", err)
 		}
 	}
 
