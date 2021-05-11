@@ -16,7 +16,7 @@ const (
 	defaultQueryLen = 4
 )
 
-// Sling is an HTTP Request builder and sender.
+// Sling is an HTTP Request builder and sender
 type Sling struct {
 	httpClient      slinghttp.Client
 	method          string
@@ -36,38 +36,41 @@ func New(httpClient slinghttp.Client) *Sling {
 	}
 }
 
-// New returns a copy of a Sling for creating a new Sling with properties
-// from a parent Sling. For example,
-//
-// 	parentSling := sling.New().Client(client).Base("https://api.io/")
-// 	fooSling := parentSling.New().Get("foo/")
-// 	barSling := parentSling.New().Get("bar/")
-//
-// fooSling and barSling will both use the same client, but send requests to
-// https://api.io/foo/ and https://api.io/bar/ respectively.
-//
-// Note that query and body values are copied so if pointer values are used,
-// mutating the original value will mutate the value within the child Sling.
-func (s *Sling) New() *Sling {
-	// copy Headers pairs into new Header map
-	headerCopy := make(http.Header)
-	for k, v := range s.header {
-		headerCopy[k] = v
+// Clone return Sling with same values
+// All values are copied except HTTP client so that change in the clone will not affect the original
+func (s *Sling) New() (*Sling, error) {
+	// Copy request url
+	// Feel like a hack
+	reqURLStr := s.reqURL.String()
+	reqURL, err := url.Parse(reqURLStr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse url: %w", err)
 	}
+
+	// Copy header
+	header := make(http.Header)
+	for k, v := range s.header {
+		header[k] = v
+	}
+
+	// Copy queries
+	queries := make([]interface{}, 0, len(s.queries))
+	copy(queries, s.queries)
+
 	return &Sling{
 		httpClient:      s.httpClient,
 		method:          s.method,
-		reqURL:          s.reqURL,
-		header:          headerCopy,
-		queries:         append([]interface{}{}, s.queries...),
+		reqURL:          reqURL,
+		header:          header,
+		queries:         queries,
 		bodyProvider:    s.bodyProvider,
 		responseDecoder: s.responseDecoder,
-	}
+	}, nil
 }
 
 // HTTP client
 
-// HTTPClient set HTTP client.
+// HTTPClient set HTTP client
 // Fallback to http.DefaultClient
 func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 	if client == nil {
@@ -137,8 +140,8 @@ func (s *Sling) SetHeader(key, value string) *Sling {
 
 // URL
 
-// RequestURL set request url.
-// Leave empty if error.
+// RequestURL set request url
+// Leave empty if error
 func (s *Sling) RequestURL(reqURL string) *Sling {
 	parsedReqURL, err := url.Parse(reqURL)
 	if err != nil {
@@ -206,7 +209,7 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 
 // Request
 
-// Request return HTTP request.
+// Request return HTTP request
 func (s *Sling) Request() (*http.Request, error) {
 	if err := addQueriesToURL(s.reqURL, s.queries); err != nil {
 		return nil, fmt.Errorf("failed to add queries to url: %w", err)
