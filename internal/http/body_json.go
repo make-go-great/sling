@@ -9,17 +9,17 @@ import (
 
 const jsonContentType = "application/json"
 
-type jsonBody struct {
+type jsonBodyProvider struct {
 	data interface{}
 }
 
-var _ Body = (*jsonBody)(nil)
+var _ BodyProvider = (*jsonBodyProvider)(nil)
 
-func (b *jsonBody) ContentType() string {
+func (b *jsonBodyProvider) ContentType() string {
 	return jsonContentType
 }
 
-func (b *jsonBody) Output() (io.Reader, error) {
+func (b *jsonBodyProvider) Body() (io.Reader, error) {
 	buf := &bytes.Buffer{}
 
 	if err := json.NewEncoder(buf).Encode(b.data); err != nil {

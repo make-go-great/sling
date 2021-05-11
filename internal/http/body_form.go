@@ -10,17 +10,17 @@ import (
 
 const formContentType = "application/x-www-form-urlencoded"
 
-type formBody struct {
+type formBodyProvider struct {
 	data interface{}
 }
 
-var _ Body = (*formBody)(nil)
+var _ BodyProvider = (*formBodyProvider)(nil)
 
-func (b *formBody) ContentType() string {
+func (b *formBodyProvider) ContentType() string {
 	return formContentType
 }
 
-func (b *formBody) Output() (io.Reader, error) {
+func (b *formBodyProvider) Body() (io.Reader, error) {
 	urlValues, err := query.Values(b.data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query values: %w", err)

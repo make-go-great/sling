@@ -2,7 +2,7 @@ package http
 
 import "io"
 
-type Body interface {
+type BodyProvider interface {
 	ContentType() string
-	Output() (io.Reader, error)
+	Body() (io.Reader, error)
 }
