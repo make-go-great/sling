@@ -13,7 +13,7 @@ import (
 type Sling struct {
 	httpClient      slinghttp.Client
 	method          string
-	pathURL         *url.URL
+	reqURL          *url.URL
 	header          http.Header
 	queries         []interface{}
 	bodyProvider    BodyProvider
@@ -52,7 +52,7 @@ func (s *Sling) New() *Sling {
 	return &Sling{
 		httpClient:      s.httpClient,
 		method:          s.method,
-		pathURL:         s.pathURL,
+		reqURL:          s.reqURL,
 		header:          headerCopy,
 		queries:         append([]interface{}{}, s.queries...),
 		bodyProvider:    s.bodyProvider,
@@ -77,45 +77,45 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 // HTTP Method
 // See: https://golang.org/pkg/net/http/#pkg-constants
 
-func (s *Sling) Get(pathURL string) *Sling {
-	return s.Method(http.MethodGet, pathURL)
+func (s *Sling) Get(reqURL string) *Sling {
+	return s.Method(http.MethodGet, reqURL)
 }
 
-func (s *Sling) Head(pathURL string) *Sling {
-	return s.Method(http.MethodHead, pathURL)
+func (s *Sling) Head(reqURL string) *Sling {
+	return s.Method(http.MethodHead, reqURL)
 }
 
-func (s *Sling) Post(pathURL string) *Sling {
-	return s.Method(http.MethodPost, pathURL)
+func (s *Sling) Post(reqURL string) *Sling {
+	return s.Method(http.MethodPost, reqURL)
 }
 
-func (s *Sling) Put(pathURL string) *Sling {
-	return s.Method(http.MethodPut, pathURL)
+func (s *Sling) Put(reqURL string) *Sling {
+	return s.Method(http.MethodPut, reqURL)
 }
 
-func (s *Sling) Patch(pathURL string) *Sling {
-	return s.Method(http.MethodPatch, pathURL)
+func (s *Sling) Patch(reqURL string) *Sling {
+	return s.Method(http.MethodPatch, reqURL)
 }
 
-func (s *Sling) Delete(pathURL string) *Sling {
-	return s.Method(http.MethodDelete, pathURL)
+func (s *Sling) Delete(reqURL string) *Sling {
+	return s.Method(http.MethodDelete, reqURL)
 }
 
-func (s *Sling) Connect(pathURL string) *Sling {
-	return s.Method(http.MethodConnect, pathURL)
+func (s *Sling) Connect(reqURL string) *Sling {
+	return s.Method(http.MethodConnect, reqURL)
 }
 
-func (s *Sling) Options(pathURL string) *Sling {
-	return s.Method(http.MethodOptions, pathURL)
+func (s *Sling) Options(reqURL string) *Sling {
+	return s.Method(http.MethodOptions, reqURL)
 }
 
-func (s *Sling) Trace(pathURL string) *Sling {
-	return s.Method(http.MethodTrace, pathURL)
+func (s *Sling) Trace(reqURL string) *Sling {
+	return s.Method(http.MethodTrace, reqURL)
 }
 
-func (s *Sling) Method(method, pathURL string) *Sling {
+func (s *Sling) Method(method, reqURL string) *Sling {
 	s.method = method
-	return s.PathURL(pathURL)
+	return s.RequestURL(reqURL)
 }
 
 // Header
@@ -132,15 +132,15 @@ func (s *Sling) SetHeader(key, value string) *Sling {
 
 // URL
 
-// PathURL set path url from string.
+// RequestURL set request url.
 // Leave empty if error.
-func (s *Sling) PathURL(urlStr string) *Sling {
-	pathURL, err := url.Parse(urlStr)
+func (s *Sling) RequestURL(reqURL string) *Sling {
+	parsedReqURL, err := url.Parse(reqURL)
 	if err != nil {
 		return s
 	}
 
-	s.pathURL = pathURL
+	s.reqURL = parsedReqURL
 	return s
 }
 
@@ -216,7 +216,7 @@ func (s *Sling) BodyForm(bodyForm interface{}) *Sling {
 // Returns any errors parsing the rawURL, encoding query structs, encoding
 // the body, or creating the http.Request.
 func (s *Sling) Request() (*http.Request, error) {
-	err := addQueryStructs(s.pathURL, s.queries)
+	err := addQueriesToURL(s.reqURL, s.queries)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func (s *Sling) Request() (*http.Request, error) {
 			return nil, err
 		}
 	}
-	req, err := http.NewRequest(s.method, s.pathURL.String(), body)
+	req, err := http.NewRequest(s.method, s.reqURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -236,10 +236,7 @@ func (s *Sling) Request() (*http.Request, error) {
 	return req, err
 }
 
-// addQueryStructs parses url tagged query structs using go-querystring to
-// encode them to url.Values and format them onto the url.RawQuery. Any
-// query parsing or encoding errors are returned.
-func addQueryStructs(reqURL *url.URL, queryStructs []interface{}) error {
+func addQueriesToURL(reqURL *url.URL, queryStructs []interface{}) error {
 	urlValues, err := url.ParseQuery(reqURL.RawQuery)
 	if err != nil {
 		return err
