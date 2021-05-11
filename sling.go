@@ -13,7 +13,7 @@ import (
 type Sling struct {
 	httpClient      slinghttp.Client
 	method          string
-	rawURL          *url.URL
+	pathURL         *url.URL
 	header          http.Header
 	queryStructs    []interface{}
 	bodyProvider    BodyProvider
@@ -52,7 +52,7 @@ func (s *Sling) New() *Sling {
 	return &Sling{
 		httpClient:      s.httpClient,
 		method:          s.method,
-		rawURL:          s.rawURL,
+		pathURL:         s.pathURL,
 		header:          headerCopy,
 		queryStructs:    append([]interface{}{}, s.queryStructs...),
 		bodyProvider:    s.bodyProvider,
@@ -113,7 +113,7 @@ func (s *Sling) Trace(pathURL string) *Sling {
 
 func (s *Sling) Method(method, pathURL string) *Sling {
 	s.method = method
-	return s.Path(pathURL)
+	return s.PathURL(pathURL)
 }
 
 // Header
@@ -130,12 +130,13 @@ func (s *Sling) SetHeader(key, value string) *Sling {
 
 // URL
 
-func (s *Sling) Path(urlStr string) *Sling {
-	pathURL, pathErr := url.Parse(urlStr)
-	if pathErr == nil {
-		s.rawURL = pathURL
+func (s *Sling) PathURL(urlStr string) *Sling {
+	pathURL, err := url.Parse(urlStr)
+	if err != nil {
 		return s
 	}
+
+	s.pathURL = pathURL
 	return s
 }
 
@@ -207,7 +208,7 @@ func (s *Sling) BodyForm(bodyForm interface{}) *Sling {
 // Returns any errors parsing the rawURL, encoding query structs, encoding
 // the body, or creating the http.Request.
 func (s *Sling) Request() (*http.Request, error) {
-	err := addQueryStructs(s.rawURL, s.queryStructs)
+	err := addQueryStructs(s.pathURL, s.queryStructs)
 	if err != nil {
 		return nil, err
 	}
@@ -219,7 +220,7 @@ func (s *Sling) Request() (*http.Request, error) {
 			return nil, err
 		}
 	}
-	req, err := http.NewRequest(s.method, s.rawURL.String(), body)
+	req, err := http.NewRequest(s.method, s.pathURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
