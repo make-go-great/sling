@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	goquery "github.com/google/go-querystring/query"
+	"github.com/google/go-querystring/query"
 )
 
 // Doer executes http requests.  It is implemented by *http.Client.  You can
@@ -306,7 +306,7 @@ func addQueryStructs(reqURL *url.URL, queryStructs []interface{}) error {
 	}
 	// encodes query structs into a url.Values map and merges maps
 	for _, queryStruct := range queryStructs {
-		queryValues, err := goquery.Values(queryStruct)
+		queryValues, err := query.Values(queryStruct)
 		if err != nil {
 			return err
 		}
