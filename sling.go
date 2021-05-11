@@ -82,48 +82,48 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 	return s
 }
 
-// HTTP Method
+// HTTP method
 // https://golang.org/pkg/net/http/#pkg-constants
 
-func (s *Sling) Get(reqURL string) *Sling {
-	return s.Method(http.MethodGet, reqURL)
+func (s *Sling) Get(pathURL string) *Sling {
+	return s.Method(http.MethodGet, pathURL)
 }
 
-func (s *Sling) Head(reqURL string) *Sling {
-	return s.Method(http.MethodHead, reqURL)
+func (s *Sling) Head(pathURL string) *Sling {
+	return s.Method(http.MethodHead, pathURL)
 }
 
-func (s *Sling) Post(reqURL string) *Sling {
-	return s.Method(http.MethodPost, reqURL)
+func (s *Sling) Post(pathURL string) *Sling {
+	return s.Method(http.MethodPost, pathURL)
 }
 
-func (s *Sling) Put(reqURL string) *Sling {
-	return s.Method(http.MethodPut, reqURL)
+func (s *Sling) Put(pathURL string) *Sling {
+	return s.Method(http.MethodPut, pathURL)
 }
 
-func (s *Sling) Patch(reqURL string) *Sling {
-	return s.Method(http.MethodPatch, reqURL)
+func (s *Sling) Patch(pathURL string) *Sling {
+	return s.Method(http.MethodPatch, pathURL)
 }
 
-func (s *Sling) Delete(reqURL string) *Sling {
-	return s.Method(http.MethodDelete, reqURL)
+func (s *Sling) Delete(pathURL string) *Sling {
+	return s.Method(http.MethodDelete, pathURL)
 }
 
-func (s *Sling) Connect(reqURL string) *Sling {
-	return s.Method(http.MethodConnect, reqURL)
+func (s *Sling) Connect(pathURL string) *Sling {
+	return s.Method(http.MethodConnect, pathURL)
 }
 
-func (s *Sling) Options(reqURL string) *Sling {
-	return s.Method(http.MethodOptions, reqURL)
+func (s *Sling) Options(pathURL string) *Sling {
+	return s.Method(http.MethodOptions, pathURL)
 }
 
-func (s *Sling) Trace(reqURL string) *Sling {
-	return s.Method(http.MethodTrace, reqURL)
+func (s *Sling) Trace(pathURL string) *Sling {
+	return s.Method(http.MethodTrace, pathURL)
 }
 
-func (s *Sling) Method(method, reqURL string) *Sling {
+func (s *Sling) Method(method, pathURL string) *Sling {
 	s.method = method
-	return s.RequestURL(reqURL)
+	return s.PathURL(pathURL)
 }
 
 // Header
@@ -140,15 +140,34 @@ func (s *Sling) SetHeader(key, value string) *Sling {
 
 // URL
 
-// RequestURL set request url
+// BaseURL set base URL
 // Leave empty if error
-func (s *Sling) RequestURL(reqURL string) *Sling {
-	parsedReqURL, err := url.Parse(reqURL)
+func (s *Sling) BaseURL(baseURL string) *Sling {
+	parsedBaseURL, err := url.Parse(baseURL)
 	if err != nil {
 		return s
 	}
 
-	s.reqURL = parsedReqURL
+	s.reqURL = parsedBaseURL
+	return s
+}
+
+// PathURL add path URL to base URL
+// Base URL: example.com/
+// Path URL: users
+// Result: example.com/users
+func (s *Sling) PathURL(pathURL string) *Sling {
+	// Skip if empty base URL
+	if s.reqURL == nil {
+		return s
+	}
+
+	parsedPathURL, err := url.Parse(pathURL)
+	if err != nil {
+		return s
+	}
+
+	s.reqURL = s.reqURL.ResolveReference(parsedPathURL)
 	return s
 }
 
@@ -203,7 +222,6 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 
 	s.SetHeader(contentType, ct)
 	s.bodyProvider = bodyProvider
-
 	return s
 }
 
