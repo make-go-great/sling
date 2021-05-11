@@ -7,19 +7,13 @@ import (
 	"net/url"
 
 	"github.com/google/go-querystring/query"
+	slinghttp "github.com/haunt98/sling/internal/http"
 )
-
-// Doer executes http requests.  It is implemented by *http.Client.  You can
-// wrap *http.Client with layers of Doers to form a stack of client-side
-// middleware.
-type Doer interface {
-	Do(req *http.Request) (*http.Response, error)
-}
 
 // Sling is an HTTP Request builder and sender.
 type Sling struct {
-	// http Client for doing requests
-	httpClient Doer
+	// HTTP Client for doing requests
+	httpClient slinghttp.Client
 	// HTTP method (GET, POST, etc.)
 	method string
 	// raw url string for requests
@@ -76,23 +70,15 @@ func (s *Sling) New() *Sling {
 
 // Http Client
 
-// Client sets the http Client used to do requests. If a nil client is given,
-// the http.DefaultClient will be used.
-func (s *Sling) Client(httpClient *http.Client) *Sling {
-	if httpClient == nil {
-		return s.Doer(http.DefaultClient)
-	}
-	return s.Doer(httpClient)
-}
-
-// Doer sets the custom Doer implementation used to do requests.
-// If a nil client is given, the http.DefaultClient will be used.
-func (s *Sling) Doer(doer Doer) *Sling {
-	if doer == nil {
+// HTTPClient sets the http Client.
+// Fallback to http.DefaultClient.
+func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
+	if client == nil {
 		s.httpClient = http.DefaultClient
-	} else {
-		s.httpClient = doer
+		return s
 	}
+
+	s.httpClient = client
 	return s
 }
 
