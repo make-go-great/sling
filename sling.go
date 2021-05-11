@@ -298,14 +298,24 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 
 // Receive decode response body to v
 func (s *Sling) Receive(v interface{}) error {
+	// Skip if empty response decoder
 	if s.responseDecoder == nil {
 		return nil
 	}
 
-	rsp, err := s.Response()
+	// Do request
+
+	req, err := s.Request()
 	if err != nil {
 		return err
 	}
+
+	rsp, err := s.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to do http request: %w", err)
+	}
+
+	// Skip response
 
 	if rsp.StatusCode != http.StatusOK {
 		return fmt.Errorf("http status code: %d", rsp.StatusCode)
@@ -328,19 +338,4 @@ func (s *Sling) Receive(v interface{}) error {
 	}
 
 	return nil
-}
-
-// Response return HTTP response after doing internal HTTP request
-func (s *Sling) Response() (*http.Response, error) {
-	req, err := s.Request()
-	if err != nil {
-		return nil, err
-	}
-
-	rsp, err := s.httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to do http request: %w", err)
-	}
-
-	return rsp, nil
 }
