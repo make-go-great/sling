@@ -10,7 +10,11 @@ import (
 	slinghttp "github.com/haunt98/sling/http"
 )
 
-const contentType = "Content-Type"
+const (
+	contentType = "Content-Type"
+
+	defaultQueryLen = 4
+)
 
 // Sling is an HTTP Request builder and sender.
 type Sling struct {
@@ -23,13 +27,12 @@ type Sling struct {
 	responseDecoder slinghttp.ResponseDecoder
 }
 
-// New returns a new Sling with an http DefaultClient.
-func New() *Sling {
+// New return barebone Sling
+func New(httpClient slinghttp.Client) *Sling {
 	return &Sling{
-		httpClient: http.DefaultClient,
-		method:     "GET",
+		httpClient: httpClient,
 		header:     make(http.Header),
-		queries:    make([]interface{}, 0),
+		queries:    make([]interface{}, 0, defaultQueryLen),
 	}
 }
 
