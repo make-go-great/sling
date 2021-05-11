@@ -7,7 +7,7 @@ import (
 	"net/url"
 
 	"github.com/google/go-querystring/query"
-	slinghttp "github.com/haunt98/sling/internal/http"
+	slinghttp "github.com/haunt98/sling/http"
 )
 
 const contentType = "Content-Type"
@@ -20,17 +20,16 @@ type Sling struct {
 	header          http.Header
 	queries         []interface{}
 	bodyProvider    slinghttp.BodyProvider
-	responseDecoder ResponseDecoder
+	responseDecoder slinghttp.ResponseDecoder
 }
 
 // New returns a new Sling with an http DefaultClient.
 func New() *Sling {
 	return &Sling{
-		httpClient:      http.DefaultClient,
-		method:          "GET",
-		header:          make(http.Header),
-		queries:         make([]interface{}, 0),
-		responseDecoder: jsonDecoder{},
+		httpClient: http.DefaultClient,
+		method:     "GET",
+		header:     make(http.Header),
+		queries:    make([]interface{}, 0),
 	}
 }
 
@@ -249,6 +248,7 @@ func addQueriesToURL(reqURL *url.URL, qs []interface{}) error {
 	}
 
 	reqURL.RawQuery = oldValues.Encode()
+
 	return nil
 }
 
@@ -263,11 +263,13 @@ func addHeaderToRequest(req *http.Request, header http.Header) {
 // Sending
 
 // ResponseDecoder sets the Sling's response decoder.
-func (s *Sling) ResponseDecoder(decoder ResponseDecoder) *Sling {
-	if decoder == nil {
+func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
+	if rspDecoder == nil {
 		return s
 	}
-	s.responseDecoder = decoder
+
+	s.responseDecoder = rspDecoder
+
 	return s
 }
 
@@ -334,14 +336,14 @@ func (s *Sling) Do(req *http.Request, successV, failureV interface{}) (*http.Res
 // otherwise. If the successV or failureV argument to decode into is nil,
 // decoding is skipped.
 // Caller is responsible for closing the resp.Body.
-func decodeResponse(resp *http.Response, decoder ResponseDecoder, successV, failureV interface{}) error {
+func decodeResponse(resp *http.Response, rspDecoder slinghttp.ResponseDecoder, successV, failureV interface{}) error {
 	if code := resp.StatusCode; 200 <= code && code <= 299 {
 		if successV != nil {
-			return decoder.Decode(resp, successV)
+			return rspDecoder.Decode(resp, successV)
 		}
 	} else {
 		if failureV != nil {
-			return decoder.Decode(resp, failureV)
+			return rspDecoder.Decode(resp, failureV)
 		}
 	}
 	return nil
