@@ -77,7 +77,7 @@ func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 }
 
 // HTTP Method
-// See: https://golang.org/pkg/net/http/#pkg-constants
+// https://golang.org/pkg/net/http/#pkg-constants
 
 func (s *Sling) Get(reqURL string) *Sling {
 	return s.Method(http.MethodGet, reqURL)
