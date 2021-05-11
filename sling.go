@@ -62,6 +62,8 @@ func (s *Sling) New() *Sling {
 
 // HTTP client
 
+// HTTPClient set HTTP client.
+// Fallback to http.DefaultClient
 func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
 	if client == nil {
 		s.httpClient = http.DefaultClient
@@ -130,6 +132,8 @@ func (s *Sling) SetHeader(key, value string) *Sling {
 
 // URL
 
+// PathURL set path url from string.
+// Leave empty if error.
 func (s *Sling) PathURL(urlStr string) *Sling {
 	pathURL, err := url.Parse(urlStr)
 	if err != nil {
@@ -140,12 +144,11 @@ func (s *Sling) PathURL(urlStr string) *Sling {
 	return s
 }
 
-// QueryStruct appends the queryStruct to the Sling's queryStructs. The value
-// pointed to by each queryStruct will be encoded as url query parameters on
-// new requests (see Request()).
-// The queryStruct argument should be a pointer to a url tagged struct. See
-// https://godoc.org/github.com/google/go-querystring/query for details.
-func (s *Sling) QueryStruct(queryStruct interface{}) *Sling {
+// Query
+
+// func (s *Sling) AddQuery(q interface)
+
+func (s *Sling) AddQueries(queryStruct interface{}) *Sling {
 	if queryStruct != nil {
 		s.queryStructs = append(s.queryStructs, queryStruct)
 	}
