@@ -4,4 +4,3 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/haunt98/sling.svg)](https://pkg.go.dev/github.com/haunt98/sling)
 
 This is a fork of [dghubble/sling](https://github.com/dghubble/sling).
-The purpose is for learning.
