@@ -229,6 +229,11 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 
 // Request return internal HTTP request
 func (s *Sling) Request() (*http.Request, error) {
+	// Ignore if empty HTTP client
+	if s.httpClient == nil {
+		return nil, nil
+	}
+
 	if err := addQueriesToURL(s.reqURL, s.queries); err != nil {
 		return nil, fmt.Errorf("failed to add queries to url: %w", err)
 	}
