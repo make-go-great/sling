@@ -59,7 +59,7 @@ func (s *Sling) Clone() (*Sling, error) {
 	}
 
 	// Copy queries
-	queries := make([]interface{}, 0, len(s.queries))
+	queries := make([]interface{}, len(s.queries))
 	copy(queries, s.queries)
 
 	return &Sling{
