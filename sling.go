@@ -291,11 +291,15 @@ func addHeaderToRequest(req *http.Request, header http.Header) {
 
 // Response
 
-func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
-	if rspDecoder == nil {
-		return s
-	}
+func (s *Sling) JSONResponseDecoder() *Sling {
+	return s.ResponseDecoder(&slinghttp.JSONResponseDecoder{})
+}
 
+func (s *Sling) RawResponseDecoder() *Sling {
+	return s.ResponseDecoder(&slinghttp.RawResponseDecoder{})
+}
+
+func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 	s.rspDecoder = rspDecoder
 	return s
 }
