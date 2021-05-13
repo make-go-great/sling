@@ -189,7 +189,7 @@ func (s *Sling) AddQueries(qs ...interface{}) *Sling {
 
 // Body
 
-func (s *Sling) BodyJSON(data interface{}) *Sling {
+func (s *Sling) JSONBodyProvider(data interface{}) *Sling {
 	if data == nil {
 		return s
 	}
@@ -199,7 +199,7 @@ func (s *Sling) BodyJSON(data interface{}) *Sling {
 	})
 }
 
-func (s *Sling) BodyForm(data interface{}) *Sling {
+func (s *Sling) FormBodyProvider(data interface{}) *Sling {
 	if data == nil {
 		return s
 	}
@@ -215,7 +215,7 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 	}
 
 	ct := bodyProvider.ContentType()
-	// Ignore empty content type
+	// Ignore if empty content type
 	if ct == "" {
 		return s
 	}
