@@ -12,7 +12,7 @@ func TestNew(t *testing.T) {
 	assert.NotNil(t, s.queries)
 }
 
-func TestSlingClonw(t *testing.T) {
+func TestSlingClone(t *testing.T) {
 	s := New(nil)
 	clonedS, err := s.Clone()
 	assert.NoError(t, err)
