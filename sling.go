@@ -76,13 +76,7 @@ func (s *Sling) Clone() (*Sling, error) {
 // HTTP client
 
 // HTTPClient set HTTP client
-// Fallback to http.DefaultClient
 func (s *Sling) HTTPClient(client slinghttp.Client) *Sling {
-	if client == nil {
-		s.httpClient = http.DefaultClient
-		return s
-	}
-
 	s.httpClient = client
 	return s
 }
