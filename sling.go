@@ -18,13 +18,13 @@ const (
 
 // Sling is an HTTP request builder and response receiver
 type Sling struct {
-	httpClient      slinghttp.Client
-	method          string
-	reqURL          *url.URL
-	header          http.Header
-	queries         []interface{}
-	bodyProvider    slinghttp.BodyProvider
-	responseDecoder slinghttp.ResponseDecoder
+	httpClient   slinghttp.Client
+	method       string
+	reqURL       *url.URL
+	header       http.Header
+	queries      []interface{}
+	bodyProvider slinghttp.BodyProvider
+	rspDecoder   slinghttp.ResponseDecoder
 }
 
 // New return barebone Sling
@@ -58,13 +58,13 @@ func (s *Sling) Clone() (*Sling, error) {
 	copy(queries, s.queries)
 
 	return &Sling{
-		httpClient:      s.httpClient,
-		method:          s.method,
-		reqURL:          reqURL,
-		header:          header,
-		queries:         queries,
-		bodyProvider:    s.bodyProvider,
-		responseDecoder: s.responseDecoder,
+		httpClient:   s.httpClient,
+		method:       s.method,
+		reqURL:       reqURL,
+		header:       header,
+		queries:      queries,
+		bodyProvider: s.bodyProvider,
+		rspDecoder:   s.rspDecoder,
 	}, nil
 }
 
@@ -292,14 +292,14 @@ func (s *Sling) ResponseDecoder(rspDecoder slinghttp.ResponseDecoder) *Sling {
 		return s
 	}
 
-	s.responseDecoder = rspDecoder
+	s.rspDecoder = rspDecoder
 	return s
 }
 
 // Receive decode response body to v
 func (s *Sling) Receive(v interface{}) error {
 	// Skip if empty response decoder
-	if s.responseDecoder == nil {
+	if s.rspDecoder == nil {
 		return nil
 	}
 
@@ -327,7 +327,7 @@ func (s *Sling) Receive(v interface{}) error {
 
 	defer rsp.Body.Close()
 
-	if err := s.responseDecoder.Decode(rsp, v); err != nil {
+	if err := s.rspDecoder.Decode(rsp, v); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
