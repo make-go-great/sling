@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/haunt98/sling"
-	slinghttp "github.com/haunt98/sling/http"
 )
 
 type user struct {
@@ -30,8 +29,9 @@ func exampleRaw(parent *sling.Sling) {
 	}
 
 	var bytes []byte
-	var rawRspDecoder slinghttp.RawResponseDecoder
-	if err := child.Get("/repos/haunt98/sling").ResponseDecoder(&rawRspDecoder).Receive(&bytes); err != nil {
+	if err := child.Get("/repos/haunt98/sling").
+		RawResponseDecoder().
+		Receive(&bytes); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -47,8 +47,9 @@ func exampleJSON(parent *sling.Sling) {
 	}
 
 	var u user
-	var jsonRspDecoder slinghttp.JSONResponseDecoder
-	if err := child.Get("/users/haunt98").ResponseDecoder(&jsonRspDecoder).Receive(&u); err != nil {
+	if err := child.Get("/users/haunt98").
+		JSONResponseDecoder().
+		Receive(&u); err != nil {
 		fmt.Println(err)
 		return
 	}
