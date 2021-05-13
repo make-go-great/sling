@@ -41,10 +41,15 @@ func New(httpClient slinghttp.Client) *Sling {
 func (s *Sling) Clone() (*Sling, error) {
 	// Copy request URL
 	// Feel like a hack
-	reqURLStr := s.reqURL.String()
-	reqURL, err := url.Parse(reqURLStr)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse url: %w", err)
+	var reqURL *url.URL
+	if s.reqURL != nil {
+		reqURLStr := s.reqURL.String()
+
+		var err error
+		reqURL, err = url.Parse(reqURLStr)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse url: %w", err)
+		}
 	}
 
 	// Copy header
