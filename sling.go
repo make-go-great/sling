@@ -1,6 +1,7 @@
 package sling
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -231,7 +232,7 @@ func (s *Sling) BodyProvider(bodyProvider slinghttp.BodyProvider) *Sling {
 func (s *Sling) Request() (*http.Request, error) {
 	// Ignore if empty HTTP client
 	if s.httpClient == nil {
-		return nil, nil
+		return nil, errors.New("empty http client")
 	}
 
 	if err := addQueriesToURL(s.reqURL, s.queries); err != nil {
