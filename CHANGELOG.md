@@ -1,5 +1,47 @@
 # CHANGELOG
 
+## v1.8.0 (2021-12-02)
+
+### Added
+
+- feat: return error if empty http client (2021-06-04)
+
+- feat: easy to add response decoder (2021-05-13)
+
+- feat: ignore request if empty http client (2021-05-13)
+
+- feat: do not fallback http.DefaultClient (2021-05-13)
+
+### Fixed
+
+- fix: copy queries (2021-05-13)
+
+- fix: make sure reqURL not nil when clone (2021-05-13)
+
+### Others
+
+- chore: update README badge (2021-12-02)
+
+- chore: bump go.mod and github action to go v1.17 (2021-12-02)
+
+- test: test tables for Clone() (2021-05-13)
+
+- refactor: fix typo (2021-05-13)
+
+- chore: use new response decoder in examples (2021-05-13)
+
+- refactor: JSON and Form prefix (2021-05-13)
+
+- test: unit test for Clone() (2021-05-13)
+
+- refactor: response -> rsp (2021-05-13)
+
+- test: unit test for New() (2021-05-13)
+
+- docs: it is practically worked (2021-05-12)
+
+- chore(changelog): generate v1.7.0 (2021-05-12)
+
 ## v1.7.0 (2021-05-12)
 
 ### Added
