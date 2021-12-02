@@ -8,7 +8,7 @@ import (
 	"net/url"
 
 	"github.com/google/go-querystring/query"
-	slinghttp "github.com/haunt98/sling/http"
+	slinghttp "github.com/make-go-great/sling/http"
 )
 
 const (

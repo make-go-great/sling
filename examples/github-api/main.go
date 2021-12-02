@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/haunt98/sling"
+	"github.com/make-go-great/sling"
 )
 
 type user struct {
