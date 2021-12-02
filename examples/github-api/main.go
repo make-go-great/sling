@@ -29,7 +29,7 @@ func exampleRaw(parent *sling.Sling) {
 	}
 
 	var bytes []byte
-	if err := child.Get("/repos/haunt98/sling").
+	if err := child.Get("/repos/make-go-great/sling").
 		RawResponseDecoder().
 		Receive(&bytes); err != nil {
 		fmt.Println(err)
